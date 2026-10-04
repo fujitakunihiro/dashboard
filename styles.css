@@ -43,7 +43,7 @@ h2 { margin: 0; font-size: 18px; letter-spacing: -.02em; font-weight: 600; }
 .card-top { display: flex; justify-content: space-between; align-items: center; }
 .service-icon { width: 35px; height: 35px; display: grid; place-items: center; border-radius: 9px; }
 .service-icon svg { width: 19px; height: 19px; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
-.violet { color: #7955cc; background: #f0ebfb; }.blue { color: #4176ca; background: #eaf1fb; }.mint { color: #318b70; background: #e7f5ef; }.amber { color: #bd8231; background: #fbf1e3; }
+.violet { color: #7955cc; background: #f0ebfb; }.blue { color: #4176ca; background: #eaf1fb; }.mint { color: #318b70; background: #e7f5ef; }.amber { color: #bd8231; background: #fbf1e3; }.teal { color: #248e8b; background: #e5f4f3; }
 .status { display: inline-flex; align-items: center; gap: 6px; color: #8a939e; font-size: 10px; }
 .status i { width: 6px; height: 6px; border-radius: 50%; background: #bbc2ca; }
 .status.online { color: #34805e; }.status.online i { background: #50b382; box-shadow: 0 0 0 3px #e8f5ee; }
