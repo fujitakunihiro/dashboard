@@ -1,0 +1,9 @@
+name: local-dev-dashboard
+
+services:
+  portal:
+    build: .
+    container_name: local-dev-portal
+    ports:
+      - "3000:80"
+    restart: unless-stopped
