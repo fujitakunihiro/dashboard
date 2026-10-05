@@ -1,6 +1,5 @@
-import { timingSafeEqual } from "node:crypto";
 import { execFile } from "node:child_process";
-import { access, readFile } from "node:fs/promises";
+import { access } from "node:fs/promises";
 import { createServer } from "node:http";
 import { promisify } from "node:util";
 import { dirname, relative, resolve, sep } from "node:path";
@@ -9,7 +8,6 @@ import { fileURLToPath } from "node:url";
 const execFileAsync = promisify(execFile);
 const projectDir = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const workspaceRoot = resolve(process.env.DASHBOARD_WORKSPACE_ROOT || resolve(projectDir, ".."));
-const tokenPath = resolve(projectDir, "dashboard-control-token.txt");
 const port = Number(process.env.DASHBOARD_CONTROL_PORT || 3178);
 const services = {
   music: { project: "music-server", file: "ジュークボックス/docker-compose.yml" },
@@ -20,9 +18,6 @@ const services = {
   reader: { project: "15_", file: "15_まとめビューアー/compose.yaml" },
 };
 
-const token = (await readFile(tokenPath, "utf8")).trim();
-if (token.length < 40) throw new Error(".control-token が見つからないか、形式が不正です。start-portal.ps1 を実行してください。");
-
 for (const config of Object.values(services)) {
   const composeFile = resolve(workspaceRoot, config.file);
   const pathFromRoot = relative(workspaceRoot, composeFile);
@@ -30,14 +25,6 @@ for (const config of Object.values(services)) {
   await access(composeFile);
   config.composeFile = composeFile;
   config.composeDir = dirname(composeFile);
-}
-
-function authorized(request) {
-  const match = /^Bearer\s+(.+)$/i.exec(request.headers.authorization || "");
-  if (!match) return false;
-  const provided = Buffer.from(match[1]);
-  const expected = Buffer.from(token);
-  return provided.length === expected.length && timingSafeEqual(provided, expected);
 }
 
 function send(response, status, payload) {
@@ -96,11 +83,6 @@ const server = createServer(async (request, response) => {
     send(response, 404, { error: "Not found" });
     return;
   }
-  if (!authorized(request)) {
-    send(response, 401, { error: "操作トークンが無効です。" });
-    return;
-  }
-
   if (request.method === "GET" && url.pathname === "/api/services") {
     const states = await Promise.all(Object.entries(services).map(async ([id, config]) => [id, await getServiceState(config)]));
     send(response, 200, { services: Object.fromEntries(states) });

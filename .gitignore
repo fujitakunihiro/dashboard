@@ -1,3 +1,4 @@
+# Ignore a legacy local token file; current controls do not use it.
 dashboard-control-token.txt
 control-api/*.log
 control-api/*.pid

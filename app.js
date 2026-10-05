@@ -1,8 +1,6 @@
 const cards = [...document.querySelectorAll(".service-card")];
 const refreshButton = document.querySelector("#refresh");
-const manageButton = document.querySelector("#manage");
 const statusNote = document.querySelector("#status-note");
-let controlToken = sessionStorage.getItem("localDeskControlToken");
 
 async function checkService(card) {
   const badge = card.querySelector("[data-status]");
@@ -39,24 +37,8 @@ async function refreshStatuses() {
   refreshButton.disabled = false;
 }
 
-function showContainerControls(show) {
-  for (const card of cards) {
-    card.querySelector("[data-container-actions]").hidden = !show;
-  }
-  manageButton.textContent = show ? "操作をロック" : "コンテナ操作";
-}
-
 async function requestControl(path, method = "GET") {
-  const response = await fetch(path, {
-    method,
-    headers: { Authorization: `Bearer ${controlToken}` },
-  });
-  if (response.status === 401) {
-    controlToken = null;
-    sessionStorage.removeItem("localDeskControlToken");
-    showContainerControls(false);
-    throw new Error("操作トークンが違います。もう一度入力してください。");
-  }
+  const response = await fetch(path, { method });
   const result = await response.json().catch(() => ({}));
   if (!response.ok) throw new Error(result.error || "Docker API に接続できません。");
   return result;
@@ -75,7 +57,6 @@ function renderContainerStatus(card, service) {
 }
 
 async function refreshContainerStatuses() {
-  if (!controlToken) return;
   try {
     const result = await requestControl("/api/services");
     for (const card of cards) {
@@ -83,21 +64,6 @@ async function refreshContainerStatuses() {
       if (service) renderContainerStatus(card, service);
     }
   } catch (error) {
-    statusNote.textContent = error.message;
-  }
-}
-
-async function unlockControls() {
-  const entered = window.prompt("起動スクリプトが作成した .control-token の内容を入力してください。");
-  if (!entered) return;
-  controlToken = entered.trim();
-  try {
-    await requestControl("/api/services");
-    sessionStorage.setItem("localDeskControlToken", controlToken);
-    showContainerControls(true);
-    await refreshContainerStatuses();
-  } catch (error) {
-    controlToken = null;
     statusNote.textContent = error.message;
   }
 }
@@ -122,26 +88,15 @@ async function runContainerAction(button) {
   }
 }
 
-manageButton.addEventListener("click", () => {
-  if (controlToken) {
-    controlToken = null;
-    sessionStorage.removeItem("localDeskControlToken");
-    showContainerControls(false);
-    return;
-  }
-  unlockControls();
+refreshButton.addEventListener("click", async () => {
+  await refreshStatuses();
+  await refreshContainerStatuses();
 });
-
-refreshButton.addEventListener("click", refreshStatuses);
 for (const card of cards) {
   for (const button of card.querySelectorAll("[data-action]")) {
     button.addEventListener("click", () => runContainerAction(button));
   }
 }
 
-if (controlToken) {
-  requestControl("/api/services")
-    .then(() => { showContainerControls(true); return refreshContainerStatuses(); })
-    .catch(() => { controlToken = null; sessionStorage.removeItem("localDeskControlToken"); });
-}
 refreshStatuses();
+refreshContainerStatuses();
