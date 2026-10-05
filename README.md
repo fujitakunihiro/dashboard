@@ -4,16 +4,22 @@ Docker で起動する開発環境ポータルです。`100.103.198.15` のポ�
 
 ## 起動
 
-このフォルダで実行します。
+このフォルダで PowerShell から実行します。Node.js と Docker Desktop が必要です。
 
-```sh
-docker compose up -d --build
+```powershell
+.\start-portal.ps1
 ```
 
-ブラウザで [http://localhost:3000/](http://localhost:3000/) または `http://100.103.198.15:3000/` を開いてください。各カードにはリンク先サービスの応答状態が表示されます。
+ブラウザで [http://localhost:3000/](http://localhost:3000/) または `http://100.103.198.15:3000/` を開いてください。各カードには接続状態とコンテナの起動状態が表示されます。
+
+### コンテナ操作
+
+初回起動時に `dashboard-control-token.txt` が作成されます。ポータルの「コンテナ操作」を押し、このファイルの内容を入力すると、各サービスを起動・停止できます。5ch Reader のように複数コンテナで構成されるサービスは、Compose プロジェクト単位でまとめて操作します。
+
+操作 API はホスト上で起動し、固定された Compose ファイルだけを対象にします。API リクエストにはトークンが必要です。トークンファイルは Git に登録しません。
 
 ## 停止
 
-```sh
-docker compose down
+```powershell
+.\stop-portal.ps1
 ```
