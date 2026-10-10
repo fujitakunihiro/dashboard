@@ -16,6 +16,7 @@ const services = {
   tabiphrase: { project: "12_lang", file: "12_lang/compose.yaml" },
   stock: { project: "app", file: "stock-compare/app/docker-compose.yml" },
   reader: { project: "15_", file: "15_まとめビューアー/compose.yaml" },
+  travel: { project: "tabi", file: "18_旅行コンサル/compose.yaml" },
 };
 
 for (const config of Object.values(services)) {
