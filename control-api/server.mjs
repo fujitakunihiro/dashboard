@@ -17,6 +17,7 @@ const services = {
   stock: { project: "app", file: "stock-compare/app/docker-compose.yml" },
   reader: { project: "15_", file: "15_まとめビューアー/compose.yaml" },
   museum: { project: "world-masterpieces", file: "25_全世界美術館/docker-compose.yml" },
+  travel: { project: "tabi", file: "18_旅行コンサル/compose.yaml" },
   updater: { project: "24_updater", file: "24_updater/docker-compose.yml" },
 };
 
