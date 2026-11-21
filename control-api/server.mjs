@@ -11,7 +11,7 @@ const workspaceRoot = resolve(process.env.DASHBOARD_WORKSPACE_ROOT || resolve(pr
 const port = Number(process.env.DASHBOARD_CONTROL_PORT || 3178);
 const services = {
   music: { project: "music-server", file: "ジュークボックス/docker-compose.yml" },
-  video: { project: "home-video-streamer", file: "自宅動画配信サーバー/compose.yaml" },
+  blockfall: { project: "blockfall", file: "テトリス/docker-compose.yml" },
   english: { project: "kotoba-study", file: "13_英語勉強/compose.yaml" },
   tabiphrase: { project: "12_lang", file: "12_lang/compose.yaml" },
   stock: { project: "app", file: "stock-compare/app/docker-compose.yml" },
